@@ -9,11 +9,14 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { EmpleadoService, Empleado } from './empleado';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatDialogModule, MatDialog } from '@angular/material/dialog';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 
 @Component({
   selector: 'app-root',
   imports: [
+    MatDialogModule,
     MatTooltipModule,
     CommonModule,
     ReactiveFormsModule,
@@ -24,6 +27,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     MatFormFieldModule,
     MatIconModule,
     MatCardModule,
+    MatSnackBarModule,
   ],
   templateUrl: './app.html',
   styleUrl: './app.css',
@@ -39,6 +43,8 @@ export class App implements OnInit {
     private empleadoService: EmpleadoService,
     private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
+    private dialog: MatDialog,
+    private snackBar: MatSnackBar,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
     this.form = this.fb.group({
@@ -65,18 +71,42 @@ export class App implements OnInit {
   }
 
   agregar(): void {
-    if (this.form.valid) {
-      this.empleados.push({ id: this.nextId++, ...this.form.value });
-      this.form.reset();
-      this.cdr.detectChanges();
-    } else {
-      this.form.markAllAsTouched();
-    }
+  if (this.form.valid) {
+    this.empleados.push({ id: this.nextId++, ...this.form.value });
+    this.form.reset({ name: '', email: '', phone: '' });
+    Object.keys(this.form.controls).forEach(key => {
+      this.form.get(key)?.setErrors(null);
+    });
+    this.cdr.detectChanges();
+    this.snackBar.open('Empleado agregado correctamente', 'Cerrar', {
+      duration: 3000,
+      horizontalPosition: 'right',
+      verticalPosition: 'bottom',
+      panelClass: ['snack-success']
+    });
+  } else {
+    this.form.markAllAsTouched();
   }
+}
 
   eliminar(id: number): void {
-    this.empleados = this.empleados.filter(e => e.id !== id);
-    this.cdr.detectChanges();
+    const ref = this.dialog.open(ConfirmDialogComponent, {
+      width: '400px',
+      data: { mensaje: '¿Estás seguro de que deseas eliminar este empleado?' }
+    });
+
+    ref.afterClosed().subscribe(confirmado => {
+      if(confirmado) {
+        this.empleados = this.empleados.filter(e => e.id !== id);
+        this.cdr.detectChanges();
+        this.snackBar.open('Empleado eliminado', 'Cerrar', {
+          duration: 3000,
+          horizontalPosition: 'right',
+          verticalPosition: 'bottom',
+          panelClass: ['snack-warn'],
+        });
+      }
+    });
   }
 
   getColor(name: string): string {
@@ -84,4 +114,30 @@ export class App implements OnInit {
     const index = name.charCodeAt(0) % colors.length;
     return colors[index];
   }  
+}
+
+import { Component as NgComponent, Inject as NgInject } from '@angular/core';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+
+@NgComponent({
+  selector: 'app-confirm-dialog',
+  imports: [MatButtonModule, MatDialogModule],
+  template: `
+    <h2 mat-dialog-title>Confirmar acción</h2>
+    <mat-dialog-content>{{ data.mensaje }}</mat-dialog-content>
+    <mat-dialog-actions align="end">
+      <button mat-button (click)="cerrar(false)">Cancelar</button>
+      <button mat-flat-button color="warn" (click)="cerrar(true)">Eliminar</button>
+    </mat-dialog-actions>
+  `
+})
+export class ConfirmDialogComponent {
+  constructor(
+    private ref: MatDialogRef<ConfirmDialogComponent>,
+    @NgInject(MAT_DIALOG_DATA) public data: { mensaje: string }
+  ) {}
+
+  cerrar(resultado: boolean): void {
+    this.ref.close(resultado)
+  }
 }

@@ -1,1 +1,23 @@
-/* You can add global styles to this file, and also import other style files */
+.snack-success .mdc-snackbar__surface {
+  background: #2e7d32 !important;
+}
+
+.snack-success .mdc-snackbar__label {
+  color: white !important;
+}
+
+.snack-success .mat-mdc-button {
+  color: #a5d6a7 !important;
+}
+
+.snack-warn .mdc-snackbar__surface {
+  background: #c62828 !important;
+}
+
+.snack-warn .mdc-snackbar__label {
+  color: white !important;
+}
+
+.snack-warn .mat-mdc-button {
+  color: #ef9a9a !important;
+}
