@@ -268,3 +268,14 @@ th {
   .form-row mat-form-field { width: 100%; }
   .add-btn { width: 100%; }
 }
+
+.emp-link {
+  color: #1976d2;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.emp-link:hover {
+  text-decoration: underline;
+}

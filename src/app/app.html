@@ -116,7 +116,7 @@
               <div class="name-cell">
                 <span class="avatar" [style.background]="getColor(e.name)">{{ e.name[0] }}</span>
                 <div>
-                  <div class="emp-name">{{ e.name }}</div>
+                  <a [routerLink]="['/detalle', e.id]" class="emp-link">{{ e.name }}</a>
                   <div class="emp-sub">Empleado activo</div>
                 </div>
               </div>
