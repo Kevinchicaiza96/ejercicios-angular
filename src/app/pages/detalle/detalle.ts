@@ -6,6 +6,7 @@ import { MatCardModule } from "@angular/material/card";
 import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTooltip } from "@angular/material/tooltip";
 
 interface Empleado {
   id: number;
@@ -23,7 +24,7 @@ interface Empleado {
 
 @Component({
   selector: 'app-detalle',
-  imports: [CommonModule, MatCardModule, MatIconModule, MatButtonModule, MatProgressSpinnerModule, RouterLink],
+  imports: [CommonModule, MatCardModule, MatIconModule, MatButtonModule, MatProgressSpinnerModule, RouterLink, MatTooltip],
   templateUrl: './detalle.html',
   styleUrl: './detalle.css',
 })
